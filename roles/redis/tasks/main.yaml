@@ -1,0 +1,28 @@
+- name: disable default redis module
+  ansible.builtin.command: dnf module disable redis -y
+
+- name: enable redis 7 module
+  ansible.builtin.command: dnf module enable redis:7 -y
+
+- name: Install redis server
+  ansible.builtin.package:
+    name: redis
+    state: present
+
+- name: Replace a word in a file
+  ansible.builtin.replace:
+    path: /etc/redis/redis.conf
+    regexp: '127.0.0.1'  # The regular expression to search for
+    replace: '0.0.0.0'  # The string to replace the matched pattern with
+
+- name: Replace a line in a file
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: 'protected-mode'  # The regular expression to search for
+    line: 'protected-mode no'  # The string to replace the matched pattern with
+  
+- name: start and enable service
+  ansible.builtin.service:
+    name: redis
+    state: started
+    enabled: yes
